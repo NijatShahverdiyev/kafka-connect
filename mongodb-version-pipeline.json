@@ -1,0 +1,8 @@
+{
+  "4.4.*":  {
+    "pipeline": "[{\"$match\":{\"$or\":[{\"operationType\":\"insert\",\"fullDocument.type\":\"CARD\",\"fullDocument.data.statusProduction\":\"Ready\"},{\"operationType\":\"update\",\"fullDocument.type\":\"CARD\"}]}},{\"$addFields\":{\"updatedFieldKeys\":{\"$objectToArray\":\"$updateDescription.updatedFields\"}}},{\"$match\":{\"$or\":[{\"operationType\":\"insert\"},{\"updatedFieldKeys\":{\"$elemMatch\":{\"k\":\"data.statusProduction\",\"v\":\"Ready\"}}}]}},{\"$project\":{\"_id\":1,\"ns\":1,\"fullDocument\":{\"userId\":{\"$function\":{\"body\":\"function(uuid){ const h = uuid.hex(); return h.substring(0,8)+'-'+h.substring(8,12)+'-'+h.substring(12,16)+'-'+h.substring(16,20)+'-'+h.substring(20); }\",\"args\":[\"$fullDocument.userId\"],\"lang\":\"js\"}},\"cif\":\"$fullDocument.data.customer.cif\",\"cardNumber\":\"$fullDocument.data.number\",\"cardTypeCode\":\"$fullDocument.data.cardTypeCode\"}}}]"
+  },
+  "5.0.*":{
+    "pipeline": "[{\"$match\":{\"$or\":[{\"operationType\":\"update\",\"fullDocument.type\":\"CARD\",\"$expr\":{\"$eq\":[{\"$getField\":{\"input\":\"$updateDescription.updatedFields\",\"field\":\"data.statusProduction\"}},\"Ready\"]}},{\"operationType\":\"insert\",\"fullDocument.type\":\"CARD\",\"fullDocument.data.statusProduction\":\"Ready\"}]}},{\"$project\":{\"_id\":1,\"ns\":1,\"fullDocument\":{\"userId\":{\"$function\":{\"body\":\"function(uuid){ const h = uuid.hex(); return h.substring(0,8)+'-'+h.substring(8,12)+'-'+h.substring(12,16)+'-'+h.substring(16,20)+'-'+h.substring(20); }\",\"args\":[\"$fullDocument.userId\"],\"lang\":\"js\"}},\"cif\":\"$fullDocument.data.customer.cif\",\"cardNumber\":\"$fullDocument.data.number\",\"cardTypeCode\":\"$fullDocument.data.cardTypeCode\"}}}]"
+  }
+}
